@@ -10,9 +10,9 @@ export async function getBalance(publicKeyHex: string): Promise<string> {
 }
 
 export async function sendTransfer({
-  from,
-  to,
-  amount,
+  from: _from,
+  to: _to,
+  amount: _amount,
 }: {
   from: string;
   to: string;
