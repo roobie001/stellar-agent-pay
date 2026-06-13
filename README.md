@@ -6,7 +6,7 @@ CasperAgent Pay lets users execute CSPR transactions using plain English instruc
 
 ## Demo
 
-[Demo Video](your-youtube-link-here) | [Live App](your-vercel-link-here)
+[Demo Video](https://youtu.be/RJjepOluS9g) | [Live App](https://casper-agent-pay.vercel.app/)
 
 ## What It Does
 
