@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import AgentChat from "./components/AgentChat";
 import WalletConnect from "./components/WalletConnect";
 import TransactionLog from "./components/TransactionLog";
@@ -7,8 +7,18 @@ import type { TransactionRecord } from "./lib/types";
 
 function App() {
   const [publicKey, setPublicKey] = useState("");
-  const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // 1. Initialize from localStorage
+  const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
+    const saved = localStorage.getItem("casper_transactions");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // 2. Sync to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem("casper_transactions", JSON.stringify(transactions));
+  }, [transactions]);
 
   async function handleAgentSubmit(input: string) {
     setIsProcessing(true);
@@ -46,12 +56,6 @@ function App() {
         </header>
 
         <div className="space-y-3 mb-8">
-          <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 p-4 font-medium text-sm flex items-start gap-2">
-            <span className="text-lg">⚠</span>
-            <span>
-              Dev Mode — Casper RPC mocked. Real transactions disabled.
-            </span>
-          </div>
           {!publicKey && (
             <div className="rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-300 p-4 font-medium text-sm flex items-start gap-2">
               <span className="text-lg">🔑</span>
