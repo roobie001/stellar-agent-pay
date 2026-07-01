@@ -26,55 +26,81 @@ export const AgentChat: React.FC<Props> = ({ isProcessing, onSubmit }) => {
   }
 
   return (
-    <div className="space-y-6 text-white">
-      <div>
-        <h2 className="text-xl font-semibold text-white mb-1">Agent Chat</h2>
-        <p className="text-sm text-gray-400">
-          Submit a natural language instruction and let the AI agent decide what
-          to do.
-        </p>
+    <div className="text-white">
+      <div
+        style={{
+          fontSize: "12px",
+          color: "rgba(255,255,255,0.4)",
+          marginBottom: "12px",
+        }}
+      >
+        What do you want to do?
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "6px",
+          marginBottom: "12px",
+        }}
+      >
         {prompts.map((prompt) => (
           <button
             key={prompt}
             onClick={() => handlePromptClick(prompt)}
-            className="px-3 py-2 rounded-full bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 text-xs font-medium transition cursor-pointer"
+            type="button"
+            style={{
+              background: "rgba(124,58,237,0.15)",
+              border: "0.5px solid rgba(124,58,237,0.3)",
+              color: "#c4b5fd",
+              borderRadius: "999px",
+              padding: "4px 12px",
+              fontSize: "12px",
+              cursor: "pointer",
+            }}
           >
             {prompt}
           </button>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">
-            Instruction
-          </label>
+      <form onSubmit={handleSubmit}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="e.g. send 10 XLM to G..."
-            className="w-full rounded-lg border border-gray-700 bg-gray-950 px-4 py-3 text-white outline-none focus:border-purple-600/50 focus:ring-1 focus:ring-purple-600/20 disabled:opacity-50"
+            style={{
+              flex: 1,
+              background: "rgba(255,255,255,0.05)",
+              border: "0.5px solid rgba(255,255,255,0.1)",
+              borderRadius: "8px",
+              padding: "10px 14px",
+              fontSize: "13px",
+              color: "white",
+            }}
             disabled={isProcessing}
           />
+          <button
+            type="submit"
+            disabled={isProcessing}
+            style={{
+              background: "linear-gradient(90deg, #7c3aed, #6d28d9)",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              fontSize: "13px",
+              fontWeight: 500,
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              opacity: isProcessing ? 0.7 : 1,
+            }}
+          >
+            {isProcessing ? "⟳ Processing..." : "✦ Execute"}
+          </button>
         </div>
-
-        <button
-          type="submit"
-          disabled={isProcessing}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 transition disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isProcessing ? (
-            <>
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Processing...
-            </>
-          ) : (
-            "Submit"
-          )}
-        </button>
       </form>
     </div>
   );

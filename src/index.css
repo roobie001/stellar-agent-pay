@@ -3,8 +3,6 @@
 :root {
   color-scheme: dark;
   font-family:
-    Inter,
-    ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -19,8 +17,120 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #0f172a;
+  background: linear-gradient(135deg, #0f0a1e 0%, #0a0f1e 100%);
+  background-attachment: fixed;
   color: #e2e8f0;
+}
+
+/* Thin animated purple gradient line at the very top */
+.top-shimmer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 50;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Card styles */
+.card {
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  transition:
+    box-shadow 200ms ease,
+    transform 120ms ease;
+}
+.card:hover {
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.35);
+}
+
+/* Wallet input styles */
+.wallet-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  color: #e9d5ff;
+}
+.wallet-input:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.25);
+  border-color: rgba(124, 58, 237, 0.4);
+}
+.wallet-input.mono {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New",
+    monospace;
+}
+
+/* Chip styles */
+.chip {
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #c4b5fd;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.chip:hover {
+  background: rgba(124, 58, 237, 0.25);
+}
+
+/* Submit button */
+.submit-btn {
+  background: linear-gradient(90deg, #7c3aed, #6d28d9);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition:
+    filter 160ms ease,
+    transform 120ms ease;
+}
+.submit-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.01);
+}
+
+/* Transaction item tweaks */
+.tx-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+.tx-hash {
+  color: #a78bfa;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+}
+.status-executed {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+.status-rejected {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
 }
 
 #root {

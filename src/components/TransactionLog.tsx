@@ -6,6 +6,33 @@ type Props = {
   currentAccount: string;
 };
 
+function truncatePublicKey(value: string): string {
+  if (!value) return "";
+  if (value.length <= 10) return value;
+  return `${value.slice(0, 6)}...${value.slice(-4)}`;
+}
+
+function truncateHash(value: string): string {
+  if (!value) return "";
+  if (value.length <= 14) return value;
+  return `${value.slice(0, 8)}...${value.slice(-6)}`;
+}
+
+function getActionLabel(instruction: string): string {
+  const lower = instruction.toLowerCase();
+  if (lower.includes("if") && lower.includes("balance"))
+    return "Conditional transfer";
+  if (lower.includes("check") || lower.includes("balance"))
+    return "Balance check";
+  return "Transfer";
+}
+
+function formatInstruction(instruction: string): string {
+  return instruction.replace(/G[A-Z0-9]{55,56}/g, (match) =>
+    truncatePublicKey(match),
+  );
+}
+
 function getActionIcon(instruction: string): string {
   const lower = instruction.toLowerCase();
   if (lower.includes("transfer") || lower.includes("send")) return "💰";
@@ -42,81 +69,160 @@ export const TransactionLog: React.FC<Props> = ({
   });
 
   return (
-    <div className="space-y-4 text-white">
-      <div>
-        <h3 className="text-xl font-semibold text-white mb-1">
-          Transaction Log
+    <div
+      className="text-white"
+      style={{ overflowY: "auto", maxHeight: "calc(100vh - 280px)" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "12px",
+        }}
+      >
+        <h3 style={{ fontSize: "13px", fontWeight: 500, margin: 0 }}>
+          Transaction log
         </h3>
-        <p className="text-sm text-gray-400">
-          Recent agent actions and decisions.
-        </p>
+        <span
+          style={{
+            background: "rgba(255,255,255,0.05)",
+            border: "0.5px solid rgba(255,255,255,0.08)",
+            borderRadius: "20px",
+            padding: "2px 8px",
+            fontSize: "11px",
+            color: "rgba(255,255,255,0.65)",
+          }}
+        >
+          {filteredTransactions.length}
+        </span>
       </div>
 
-      {/* FIXED HEIGHT CONTAINER WITH SCROLLBAR */}
-      <div className="h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 space-y-3">
+      <div className="pr-2 space-y-2">
         {filteredTransactions.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-gray-700 bg-gray-900/30 p-8 text-center">
+          <div
+            style={{
+              textAlign: "center",
+              padding: "32px 16px",
+              color: "rgba(255,255,255,0.45)",
+            }}
+          >
             <div className="text-3xl mb-2">📭</div>
-            <p className="text-sm text-gray-400 font-medium">
-              No transactions yet
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Submit an instruction to get started
-            </p>
+            <p className="text-sm font-medium">No transactions yet</p>
+            <p className="text-xs mt-1">Submit an instruction to get started</p>
           </div>
         ) : (
           filteredTransactions.map((record) => (
             <div
               key={record.id}
-              className="rounded-lg border border-gray-800 bg-gray-900/40 p-4 hover:bg-gray-900/60 transition"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "0.5px solid rgba(255,255,255,0.07)",
+                borderRadius: "10px",
+                padding: "10px 14px",
+              }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="text-xl mt-0.5 flex-shrink-0">
-                    {getActionIcon(record.instruction)}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-400 font-medium">
-                      {formatTimestamp(record.timestamp)}
-                    </p>
-                    <p className="text-sm text-white mt-1 break-words">
-                      {record.instruction}
-                    </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: "12px",
+                }}
+              >
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      color: "rgba(255,255,255,0.45)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {getActionLabel(record.instruction)}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      lineHeight: 1.5,
+                      color: "white",
+                    }}
+                  >
+                    {formatInstruction(record.instruction)}
                   </div>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 whitespace-nowrap ${
-                    record.status === "executed"
-                      ? "bg-green-500/20 text-green-300 border border-green-500/30"
-                      : "bg-red-500/20 text-red-300 border border-red-500/30"
-                  }`}
+                  style={{
+                    background:
+                      record.status === "executed"
+                        ? "rgba(16,185,129,0.15)"
+                        : "rgba(239,68,68,0.15)",
+                    border: `0.5px solid ${record.status === "executed" ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)"}`,
+                    color: record.status === "executed" ? "#10b981" : "#ef4444",
+                    borderRadius: "20px",
+                    padding: "2px 8px",
+                    fontSize: "11px",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
                 >
-                  {record.status === "executed" ? "✓ Executed" : "✕ Rejected"}
+                  {record.status === "executed" ? "Executed" : "Rejected"}
                 </span>
               </div>
 
-              {record.decision && (
-                <div className="mt-3 rounded-lg bg-gray-950/50 px-3 py-2 text-xs text-gray-300 border border-gray-800">
-                  <span className="text-gray-500 font-medium">Decision: </span>
-                  {record.decision}
-                </div>
-              )}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginTop: "8px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <span
+                  style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}
+                >
+                  {formatTimestamp(record.timestamp)}
+                </span>
 
-              {record.txHash && (
-                <div className="mt-3">
-                  <p className="text-xs text-gray-500 mb-1">
-                    Transaction Hash:
-                  </p>
+                {record.status === "executed" && record.txHash && (
                   <a
                     href={`https://stellar.expert/explorer/testnet/tx/${record.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-purple-400 hover:text-purple-300 font-mono hover:underline transition break-all"
+                    style={{
+                      fontSize: "11px",
+                      color: "#a78bfa",
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace',
+                    }}
                   >
-                    {record.txHash}
+                    {truncateHash(record.txHash)}
                   </a>
-                </div>
-              )}
+                )}
+
+                {record.status === "executed" && record.decision && (
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      color: "#a78bfa",
+                    }}
+                  >
+                    {record.decision}
+                  </span>
+                )}
+
+                {record.status === "rejected" && record.decision && (
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      color: "rgba(255,255,255,0.45)",
+                    }}
+                  >
+                    {record.decision}
+                  </span>
+                )}
+              </div>
             </div>
           ))
         )}

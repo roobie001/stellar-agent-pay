@@ -13,37 +13,56 @@ export const WalletPanel: React.FC<Props> = ({
   secretKey,
   setSecretKey,
 }) => {
-  const bothFilled = Boolean(publicKey && secretKey);
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-2">
-        <div
-          className={`h-2 w-2 rounded-full ${bothFilled ? "bg-green-500" : "bg-red-500"}`}
-        />
-        <h3 className="text-lg font-semibold text-white">Wallet</h3>
+    <div>
+      <div
+        style={{
+          fontSize: "11px",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "rgba(255,255,255,0.3)",
+          marginBottom: "4px",
+        }}
+      >
+        WALLET
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs text-gray-400">Public Key</label>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input
           type="text"
           placeholder="G... your Stellar public key"
           value={publicKey}
           onChange={(e) => setPublicKey(e.target.value)}
-          className="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white"
+          style={{
+            width: "100%",
+            background: "rgba(255,255,255,0.05)",
+            border: "0.5px solid rgba(255,255,255,0.1)",
+            borderRadius: "8px",
+            padding: "8px 10px",
+            fontSize: "12px",
+            color: "white",
+            fontFamily:
+              'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace',
+          }}
         />
 
-        <label className="block text-xs text-gray-400">Secret Key</label>
         <input
           type="password"
           placeholder="S... your Stellar secret key"
           value={secretKey}
           onChange={(e) => setSecretKey(e.target.value)}
-          className="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white"
+          style={{
+            width: "100%",
+            background: "rgba(255,255,255,0.05)",
+            border: "0.5px solid rgba(255,255,255,0.1)",
+            borderRadius: "8px",
+            padding: "8px 10px",
+            fontSize: "12px",
+            color: "white",
+          }}
         />
 
-        <p className="text-xs text-yellow-300">
+        <p style={{ fontSize: "11px", color: "#f59e0b", marginTop: "6px" }}>
           ⚠ Testnet only. Never paste real mainnet keys.
         </p>
       </div>
