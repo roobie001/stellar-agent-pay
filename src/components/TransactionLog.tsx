@@ -33,7 +33,7 @@ function formatInstruction(instruction: string): string {
   );
 }
 
-function getActionIcon(instruction: string): string {
+function _getActionIcon(instruction: string): string {
   const lower = instruction.toLowerCase();
   if (lower.includes("transfer") || lower.includes("send")) return "💰";
   if (lower.includes("check") || lower.includes("balance")) return "🔍";
