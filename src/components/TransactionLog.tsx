@@ -33,13 +33,13 @@ function formatInstruction(instruction: string): string {
   );
 }
 
-function _getActionIcon(instruction: string): string {
-  const lower = instruction.toLowerCase();
-  if (lower.includes("transfer") || lower.includes("send")) return "💰";
-  if (lower.includes("check") || lower.includes("balance")) return "🔍";
-  if (lower.includes("if") && lower.includes("balance")) return "⚡";
-  return "📋";
-}
+// function _getActionIcon(instruction: string): string {
+//   const lower = instruction.toLowerCase();
+//   if (lower.includes("transfer") || lower.includes("send")) return "💰";
+//   if (lower.includes("check") || lower.includes("balance")) return "🔍";
+//   if (lower.includes("if") && lower.includes("balance")) return "⚡";
+//   return "📋";
+// }
 
 function formatTimestamp(isoString: string): string {
   const date = new Date(isoString);
