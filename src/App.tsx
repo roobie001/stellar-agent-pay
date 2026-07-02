@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AgentChat from "./components/AgentChat";
 import WalletPanel from "./components/WalletPanel";
 import TransactionLog from "./components/TransactionLog";
@@ -14,7 +14,13 @@ function truncatePublicKey(publicKey: string): string {
 function EyeIcon({ hidden }: { hidden: boolean }) {
   if (hidden) {
     return (
-      <svg width="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
         <path
           d="M3 3l18 18"
           stroke="currentColor"
@@ -70,14 +76,13 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [balanceDisplay, setBalanceDisplay] = useState("••••••");
   const [balanceRevealed, setBalanceRevealed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // 1. Initialize from localStorage
   const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
     const saved = localStorage.getItem("stellar_transactions");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // 2. Sync to localStorage on every change
   useEffect(() => {
     localStorage.setItem("stellar_transactions", JSON.stringify(transactions));
   }, [transactions]);
@@ -111,7 +116,6 @@ function App() {
     };
   }, [publicKey]);
 
-  // Inside handleAgentSubmit in App.tsx
   async function handleAgentSubmit(input: string) {
     setIsProcessing(true);
     try {
@@ -121,7 +125,6 @@ function App() {
         publicKey,
         secretKey,
       );
-      // Add accountKey here
       setTransactions((prev) => [
         { ...result, accountKey: publicKey },
         ...prev,
@@ -133,7 +136,7 @@ function App() {
         instruction: input,
         status: "rejected",
         decision: error instanceof Error ? error.message : String(error),
-        accountKey: publicKey, // Add accountKey here
+        accountKey: publicKey,
       };
       setTransactions((prev) => [rejectedRecord, ...prev]);
     } finally {
@@ -158,6 +161,7 @@ function App() {
           zIndex: 0,
         }}
       />
+
       <div
         className="mx-auto flex min-h-screen max-w-7xl flex-col"
         style={{ position: "relative", zIndex: 1 }}
@@ -234,54 +238,69 @@ function App() {
             </p>
           </div>
 
-          <div
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "0.5px solid rgba(255,255,255,0.1)",
-              borderRadius: "20px",
-              padding: "6px 12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              minWidth: "220px",
-              justifyContent: "flex-end",
-              flexWrap: "wrap",
-            }}
-          >
-            <span
+          <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-8">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen((value) => !value)}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-medium text-white/80 lg:hidden"
+            >
+              ⚙ Wallet
+            </button>
+
+            <div
+              className="w-fit max-w-full min-w-0 sm:min-w-[220px]"
               style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "999px",
-                background: publicKey ? "#10b981" : "#ef4444",
+                background: "rgba(255,255,255,0.05)",
+                border: "0.5px solid rgba(255,255,255,0.1)",
+                borderRadius: "20px",
+                padding: "6px 12px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                justifyContent: "flex-end",
+                flexWrap: "wrap",
               }}
-            />
-            <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.75)" }}>
-              {publicKey ? "Connected" : "Not connected"}
-            </span>
-            {publicKey && (
+            >
               <span
                 style={{
-                  fontFamily:
-                    'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace',
-                  fontSize: "12px",
-                  color: "#a78bfa",
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "999px",
+                  background: publicKey ? "#10b981" : "#ef4444",
                 }}
+              />
+              <span
+                style={{ fontSize: "12px", color: "rgba(255,255,255,0.75)" }}
               >
-                {truncatePublicKey(publicKey)}
+                {publicKey ? "Connected" : "Not connected"}
               </span>
-            )}
+              {publicKey && (
+                <span className="hidden lg:block">
+                  <span
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace',
+                      fontSize: "12px",
+                      color: "#a78bfa",
+                    }}
+                  >
+                    {truncatePublicKey(publicKey)}
+                  </span>
+                </span>
+              )}
+            </div>
           </div>
         </header>
 
-        <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
+        <div
+          className="flex flex-col lg:flex-row"
+          style={{ flex: 1, minHeight: 0 }}
+        >
           <aside
+            className={`${sidebarOpen ? "flex" : "hidden"} w-full border-b border-b-[rgba(124,58,237,0.2)] lg:flex lg:w-[220px] lg:border-b-0 lg:border-r lg:border-r-[rgba(124,58,237,0.2)] lg:min-h-screen`}
             style={{
-              width: "220px",
               flexShrink: 0,
-              borderRight: "0.5px solid rgba(255,255,255,0.08)",
               padding: "16px",
-              display: "flex",
               flexDirection: "column",
               gap: "12px",
             }}
@@ -426,6 +445,7 @@ function App() {
               minWidth: 0,
               display: "flex",
               flexDirection: "column",
+              minHeight: 0,
             }}
           >
             <div

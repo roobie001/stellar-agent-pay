@@ -69,10 +69,7 @@ export const TransactionLog: React.FC<Props> = ({
   });
 
   return (
-    <div
-      className="text-white"
-      style={{ overflowY: "auto", maxHeight: "calc(100vh - 280px)" }}
-    >
+    <div className="text-white overflow-visible lg:overflow-y-auto lg:max-h-[calc(100vh-280px)]">
       <div
         style={{
           display: "flex",
@@ -129,6 +126,7 @@ export const TransactionLog: React.FC<Props> = ({
                   justifyContent: "space-between",
                   gap: "12px",
                 }}
+                className="flex flex-col sm:flex-row"
               >
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div

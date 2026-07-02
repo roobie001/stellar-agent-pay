@@ -66,7 +66,7 @@ export const AgentChat: React.FC<Props> = ({ isProcessing, onSubmit }) => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
