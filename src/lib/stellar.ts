@@ -1,8 +1,6 @@
 import * as StellarSdk from "@stellar/stellar-sdk";
 
-const server = new StellarSdk.Horizon.Server(
-  "https://horizon-testnet.stellar.org",
-);
+const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org");
 
 export async function getBalance(publicKey: string): Promise<string> {
   if (!publicKey || publicKey.length < 10)
@@ -30,7 +28,7 @@ export async function sendTransfer({
   const fee = await server.fetchBaseFee();
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: String(fee),
-    networkPassphrase: StellarSdk.Networks.TESTNET,
+    networkPassphrase: StellarSdk.Networks.PUBLIC,
   })
     .addOperation(
       StellarSdk.Operation.payment({

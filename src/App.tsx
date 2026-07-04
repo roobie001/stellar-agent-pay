@@ -213,9 +213,9 @@ function App() {
               Autonomous AI payments on Stellar Network
               <span
                 style={{
-                  background: "rgba(124,58,237,0.15)",
-                  border: "0.5px solid rgba(124,58,237,0.3)",
-                  color: "#a78bfa",
+                  background: "rgba(16,185,129,0.15)",
+                  border: "0.5px solid rgba(16,185,129,0.3)",
+                  color: "#10b981",
                   borderRadius: "20px",
                   padding: "2px 8px",
                   fontSize: "11px",
@@ -233,7 +233,7 @@ function App() {
                     display: "inline-block",
                   }}
                 />
-                Testnet
+                Mainnet
               </span>
             </p>
           </div>

@@ -63,7 +63,7 @@ export const WalletPanel: React.FC<Props> = ({
         />
 
         <p style={{ fontSize: "11px", color: "#f59e0b", marginTop: "6px" }}>
-          ⚠ Testnet only. Never paste real mainnet keys.
+          ⚠ Never share your secret key with anyone.
         </p>
       </div>
     </div>

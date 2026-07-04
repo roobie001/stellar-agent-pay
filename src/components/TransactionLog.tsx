@@ -184,7 +184,7 @@ export const TransactionLog: React.FC<Props> = ({
 
                 {record.status === "executed" && record.txHash && (
                   <a
-                    href={`https://stellar.expert/explorer/testnet/tx/${record.txHash}`}
+                    href={`https://stellar.expert/explorer/public/tx/${record.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
