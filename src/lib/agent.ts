@@ -1,7 +1,7 @@
 import type { AgentInstruction, TransactionRecord } from "./types";
-import { getBalance, sendTransfer } from "./stellar";
+import { getBalance, sendTransfer, sendTransferWithFreighter } from "./stellar";
 
-const AI_URL = import.meta.env.DEV ? "http://localhost:3001/ai" : "/api/ai";
+const AI_URL = import.meta.env.DEV ? "http://localhost:3003/ai" : "/api/ai";
 
 function parseInstructionMock(input: string): AgentInstruction {
   const lower = input.toLowerCase();
@@ -107,7 +107,8 @@ function evaluateCondition(condition: string, balance: number): boolean {
 export async function executeInstruction(
   instruction: AgentInstruction,
   publicKey: string,
-  secretKey?: string,
+  secretKey: string,
+  isFreighterConnected: boolean,
 ): Promise<TransactionRecord> {
   const id = Date.now().toString();
   const timestamp = new Date().toISOString();
@@ -131,12 +132,18 @@ export async function executeInstruction(
   }
 
   if (instruction.action === "transfer") {
-    const txHash = await sendTransfer({
-      from: publicKey,
-      to: instruction.recipient ?? "",
-      amount: instruction.amount ?? 0,
-      secretKey: secretKey ?? "",
-    });
+    const txHash = isFreighterConnected
+      ? await sendTransferWithFreighter({
+          from: publicKey,
+          to: instruction.recipient ?? "",
+          amount: instruction.amount ?? 0,
+        })
+      : await sendTransfer({
+          from: publicKey,
+          to: instruction.recipient ?? "",
+          amount: instruction.amount ?? 0,
+          secretKey,
+        });
 
     return {
       id,
@@ -171,12 +178,18 @@ export async function executeInstruction(
       };
     }
 
-    const txHash = await sendTransfer({
-      from: publicKey,
-      to: instruction.recipient ?? "",
-      amount: instruction.amount ?? 0,
-      secretKey: secretKey ?? "",
-    });
+    const txHash = isFreighterConnected
+      ? await sendTransferWithFreighter({
+          from: publicKey,
+          to: instruction.recipient ?? "",
+          amount: instruction.amount ?? 0,
+        })
+      : await sendTransfer({
+          from: publicKey,
+          to: instruction.recipient ?? "",
+          amount: instruction.amount ?? 0,
+          secretKey,
+        });
 
     return {
       id,

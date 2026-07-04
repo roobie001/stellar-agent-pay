@@ -73,9 +73,10 @@ function EyeIcon({ hidden }: { hidden: boolean }) {
 function App() {
   const [publicKey, setPublicKey] = useState("");
   const [secretKey, setSecretKey] = useState("");
+  const [isFreighterConnected, setIsFreighterConnected] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [balanceDisplay, setBalanceDisplay] = useState("••••••");
-  const [balanceRevealed, setBalanceRevealed] = useState(false);
+  const [balanceValue, setBalanceValue] = useState<string>("");
+  const [balanceVisible, setBalanceVisible] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
@@ -92,7 +93,7 @@ function App() {
 
     async function refreshBalance() {
       if (!publicKey) {
-        setBalanceDisplay("••••••");
+        setBalanceValue("");
         return;
       }
 
@@ -100,12 +101,18 @@ function App() {
         const { getBalance } = await import("./lib/stellar");
         const balance = await getBalance(publicKey);
         if (!cancelled) {
-          setBalanceDisplay(balance);
+          setBalanceValue(balance);
         }
-      } catch {
-        if (!cancelled) {
-          setBalanceDisplay("••••••");
+      } catch (error: any) {
+        if (error?.response?.status === 404) {
+          if (!cancelled) {
+            setBalanceValue(
+              "Account not found. Verify via your Stellar wallet.",
+            );
+          }
+          return;
         }
+        throw error;
       }
     }
 
@@ -124,6 +131,7 @@ function App() {
         instruction,
         publicKey,
         secretKey,
+        isFreighterConnected,
       );
       setTransactions((prev) => [
         { ...result, accountKey: publicKey },
@@ -272,22 +280,12 @@ function App() {
               <span
                 style={{ fontSize: "12px", color: "rgba(255,255,255,0.75)" }}
               >
-                {publicKey ? "Connected" : "Not connected"}
+                {publicKey
+                  ? isFreighterConnected
+                    ? `🔐 Freighter ${truncatePublicKey(publicKey)}`
+                    : `🔑 ${truncatePublicKey(publicKey)}`
+                  : "Not connected"}
               </span>
-              {publicKey && (
-                <span className="hidden lg:block">
-                  <span
-                    style={{
-                      fontFamily:
-                        'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace',
-                      fontSize: "12px",
-                      color: "#a78bfa",
-                    }}
-                  >
-                    {truncatePublicKey(publicKey)}
-                  </span>
-                </span>
-              )}
             </div>
           </div>
         </header>
@@ -310,6 +308,8 @@ function App() {
               setPublicKey={setPublicKey}
               secretKey={secretKey}
               setSecretKey={setSecretKey}
+              isFreighterConnected={isFreighterConnected}
+              setIsFreighterConnected={setIsFreighterConnected}
             />
 
             <div
@@ -341,7 +341,7 @@ function App() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setBalanceRevealed((value) => !value)}
+                  onClick={() => setBalanceVisible((value) => !value)}
                   style={{
                     background: "transparent",
                     border: "none",
@@ -352,13 +352,13 @@ function App() {
                     alignItems: "center",
                   }}
                   aria-label={
-                    balanceRevealed ? "Hide balance" : "Reveal balance"
+                    balanceVisible ? "Hide balance" : "Reveal balance"
                   }
                 >
-                  <EyeIcon hidden={!balanceRevealed} />
+                  <EyeIcon hidden={!balanceVisible} />
                 </button>
               </div>
-              {balanceRevealed ? (
+              {balanceVisible ? (
                 <div
                   style={{
                     display: "flex",
@@ -368,12 +368,17 @@ function App() {
                 >
                   <span
                     style={{
-                      fontSize: "20px",
+                      fontSize: balanceValue.startsWith("Account")
+                        ? "11px"
+                        : "13px",
                       fontWeight: 500,
-                      color: "#a78bfa",
+                      color: balanceValue.startsWith("Account")
+                        ? "rgba(255,255,255,0.4)"
+                        : "#a78bfa",
+                      lineHeight: 1.35,
                     }}
                   >
-                    {balanceDisplay}
+                    {balanceValue}
                   </span>
                 </div>
               ) : (
